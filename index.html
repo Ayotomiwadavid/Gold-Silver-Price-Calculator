@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Gold and Silver Price Calculator</title>
+</head>
+
+<body>
+    <style>
+        .calculatorHeading {
+            font-size: 25px;
+            font-weight: bolder;
+            text-transform: capitalize;
+            color: #AC7C29;
+        }
+
+        .priceCalculator {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 10px;
+            box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .labelInputCont {
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+            justify-content: center;
+            width: 100%;
+            padding: 10px 0;
+        }
+
+        .input {
+            width: 100%;
+            height: 45px;
+            margin: 10px 0;
+            padding: 10px 15px;
+            outline: none;
+        }
+
+        .inputNumber {
+            width: 90%;
+            height: 45px;
+            margin: 10px 0;
+            outline: none;
+            padding: 0 10px;
+        }
+
+        .inputNumber::-webkit-inner-spin-button {
+            display: none;
+        }
+
+        .calculateButton {
+            background: #AC7C29;
+            width: 100%;
+            height: 45px;
+            margin: 10px 0;
+            border: none;
+            outline: none;
+            color: white;
+            text-transform: capitalize;
+            font-size: 16px;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+
+        .errormsg {
+            width: 100%;
+            text-align: left;
+            font-size: 16px;
+            color: red;
+            padding: 0 15px;
+            display: none;
+        }
+
+        .result {
+            font-size: 17px;
+            font-weight: bold;
+            text-align: left;
+            padding: 15px;
+            color: #AC7C29;
+        }
+    </style>
+    <h1 class="calculatorHeading">Gold and Silver Price Calculator</h1>
+    <form id="priceCalculator" class="priceCalculator">
+        <select id="metal" class="input" name="metal" title="metal">
+            <option value="select metal">select metal</option>
+            <option value="gold">Gold</option>
+            <option value="silver">Silver</option>
+        </select>
+        <select id="karat" class="input" name="karat" title="karat">
+            <option value="select karat">select karat</option>
+            <option value="24">24K</option>
+            <option value="22">22K</option>
+            <option value="18">18K</option>
+        </select>
+        <input type="number" class="inputNumber" id="weight" placeholder="weight in gram" name="weight" title="weight"
+            min="0" required>
+        <span class="errormsg" id="errormsg">All fields are required</span>
+        <button type="button" class="calculateButton">Calculate</button>
+    </form>
+    <h2 class="result" id="result">Price: $0.00</h2>
+    <script type="text/javascript">
+        const metalSelect = document.querySelector('#metal');
+        const karatSelect = document.querySelector('#karat');
+        const weightInput = document.querySelector('#weight');
+        const errormsgTag = document.querySelector('.errormsg');
+        const calculateBtn = document.querySelector('.calculateButton');
+        const resultTag = document.querySelector('#result');
+
+        const prices = {
+            gold: 102.9813,
+            silver: 1.3456
+        };
+
+        const purityAdjustmentGold = {
+            24: 1.0,
+            22: 22 / 24,
+            18: 18 / 24
+        };
+
+        calculateBtn.addEventListener('click', () => {
+            const metal = metalSelect.value;
+            const karat = karatSelect.value;
+            const weight = parseFloat(weightInput.value);
+
+            if (metal === 'select metal' || (metal === 'gold' && karat === 'select karat') || isNaN(weight) || weight <= 0) {
+                errormsgTag.style.display = 'block';
+            } else {
+                errormsgTag.style.display = 'none';
+                let result = 0;
+
+                if (metal === 'gold') {
+                    const pricePerOne = prices.gold;
+                    const purity = purityAdjustmentGold[karat];
+                    result = pricePerOne * weight * purity;
+                } else if (metal === 'silver') {
+                    const pricePerOne = prices.silver;
+                    result = pricePerOne * weight;
+                }
+
+                resultTag.innerHTML = `Price: $${result.toFixed(2)}`;
+            }
+        });
+    </script>
+</body>
+
+</html>
